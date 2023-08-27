@@ -60,6 +60,7 @@ def get_bookinfo(bookId):
     params = dict(bookId=bookId)
     r = session.get(WEREAD_BOOK_INFO, params=params)
     isbn = ""
+    newRating = -1
     if r.ok:
         data = r.json()
         isbn = data["isbn"]
@@ -407,6 +408,8 @@ if __name__ == "__main__":
             bookmark_list = sorted(bookmark_list, key=lambda x: (
                 x.get("chapterUid", 1), 0 if (x.get("range", "") == "" or x.get("range").split("-")[0]=="" ) else int(x.get("range").split("-")[0])))
             isbn,rating = get_bookinfo(bookId)
+            if (rating < 0):
+                continue
             children, grandchild = get_children(
                 chapter, summary, bookmark_list)
             id = insert_to_notion(title, bookId, cover, sort, author,isbn,rating)
